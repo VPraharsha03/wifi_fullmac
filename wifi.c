@@ -355,43 +355,71 @@ static struct net_device_ops nvf_ndev_ops = {
 /* Array of "supported" channels in 2ghz band. It's required for wifi.
  * For demo - the only channel 6. */
 static struct ieee80211_channel nvf_supported_channels_2ghz[] = {
-        {
-                .band = NL80211_BAND_2GHZ,
-                .hw_value = 6,
-                .center_freq = 2437,
-        }
+    {
+        .band = NL80211_BAND_2GHZ,
+        .hw_value = 6,
+        .center_freq = 2437,
+        .flags = IEEE80211_CHAN_NO_IBSS, 
+    },
+    {
+        .band = NL80211_BAND_2GHZ,
+        .hw_value = 1,
+        .center_freq = 2412,
+        .flags = IEEE80211_CHAN_NO_IBSS,
+    },
+    {
+        .band = NL80211_BAND_2GHZ,
+        .hw_value = 11,
+        .center_freq = 2462,
+        .flags = IEEE80211_CHAN_NO_IBSS,
+    },
+    // Add additional channels as needed for 40 MHz support
 };
 
 /* Array of supported rates. Its required to support at least those next rates for 2ghz band. */
 static struct ieee80211_rate nvf_supported_rates_2ghz[] = {
-        {
-                .bitrate = 10,
-                .hw_value = 0x1,
-        },
-        {
-                .bitrate = 20,
-                .hw_value = 0x2,
-        },
-        {
-                .bitrate = 55,
-                .hw_value = 0x4,
-        },
-        {
-                .bitrate = 110,
-                .hw_value = 0x8,
-        }
+    {
+        .bitrate = 10,
+        .hw_value = 0x1,
+    },
+    {
+        .bitrate = 20,
+        .hw_value = 0x2,
+    },
+    {
+        .bitrate = 55,
+        .hw_value = 0x4,
+    },
+    {
+        .bitrate = 110,
+        .hw_value = 0x8,
+    },
+    {
+        .bitrate = 30, // 40 MHz rate
+        .hw_value = 0x10,
+    },
+    {
+        .bitrate = 60, // 40 MHz rate
+        .hw_value = 0x20,
+    },
+    {
+        .bitrate = 150, // 40 MHz rate
+        .hw_value = 0x40,
+    },
+    {
+        .bitrate = 300, // 40 MHz rate
+        .hw_value = 0x80,
+    },
 };
 
 /* Structure that describes supported band of 2ghz. */
 static struct ieee80211_supported_band nf_band_2ghz = {
-        .ht_cap.cap = IEEE80211_HT_CAP_SGI_20, /* add other band capabilities if needed, like 40 width etc. */
-        .ht_cap.ht_supported = false,
-
-        .channels = nvf_supported_channels_2ghz,
-        .n_channels = ARRAY_SIZE(nvf_supported_channels_2ghz),
-
-        .bitrates = nvf_supported_rates_2ghz,
-        .n_bitrates = ARRAY_SIZE(nvf_supported_rates_2ghz),
+    .ht_cap.cap = IEEE80211_HT_CAP_SGI_20 | IEEE80211_HT_CAP_SGI_40, // Enable short guard interval for both 20 and 40 MHz
+    .ht_cap.ht_supported = true, // Indicate that HT is supported
+    .channels = nvf_supported_channels_2ghz,
+    .n_channels = ARRAY_SIZE(nvf_supported_channels_2ghz),
+    .bitrates = nvf_supported_rates_2ghz,
+    .n_bitrates = ARRAY_SIZE(nvf_supported_rates_2ghz),
 };
 
 /* Function that creates wifi context and net_device with wireless_dev.
